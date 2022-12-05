@@ -12,13 +12,13 @@ const App = () => {
     <div className="min-h-screen">
 
       <div className='gradient-bg-welcome'>
-      <Navbar/>
-      <Loader/>
-      <Welcome/>
+        <Navbar />
+        <Loader />
+        <Welcome />
       </div>
-      <Services/>
-      <Transactions/>
-      <Footer/>
+      <Services />
+      <Transactions />
+      <Footer />
 
     </div>
   )
