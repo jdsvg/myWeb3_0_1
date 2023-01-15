@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import reactLogo from './assets/react.svg'
 
-import { Navbar, Loader, Welcome, Services, Transactions, Footer } from './components/index'
+import { Navbar, Welcome, Services, Transactions, Footer } from './components/index'
 
 import './App.css'
 
