@@ -17,6 +17,7 @@ const getEthereumContract = () => {
     return transactionContract;
 }
 
+//Data's setter to transactions
 export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({ addressTo: '', amount: '', keyword: '', message: '' });
 

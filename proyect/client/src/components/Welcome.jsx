@@ -46,7 +46,7 @@ const Welcome = () => {
                     <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
                         Explore the Crypto world. Buy and sell cryptocurrencies easily on Krypto.
                     </p>
-                    {/* If currentAccount == true => !currentAccount == false => false && true => false :: Don't show the button */}
+                    {/* If currentAccount = true => !currentAccount = false => false && true => false :: Don't show the button */}
                     {!currentAccount && (<button
                         type="button"
                         onClick={connectWallet}
@@ -119,7 +119,7 @@ const Welcome = () => {
                         <div className="h-[1px] w-full bg-gray-400 my-2" />
 
                         {/* Test */}
-                        {/* {false ? ( */}
+                        {/* {true ? ( */}
                         {false ? (
                             <Loader />
                         ) : (
