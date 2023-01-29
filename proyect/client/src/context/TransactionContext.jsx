@@ -15,7 +15,7 @@ const getEthereumContract = () => {
     const signer = provider.getSigner();
     const transactionContract = new ethers.Contract(contractAddress, contractABI, signer);
     return transactionContract;
-}
+};
 
 //Data's setter to transactions
 export const TransactionProvider = ({ children }) => {
@@ -25,10 +25,34 @@ export const TransactionProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [transactionCount, setTransactionCount] = useState(localStorage.getItem('transactionCount'));
+    const [transactions, setTransactions] = useState([]);
+
+
     const handleChange = (e, name) => {
         setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
-    }
+    };
     // **
+
+    const getAllTransactions = async () => {
+        try {
+            if (!ethereum) return alert("Please Install MetaMask");
+            const transactionContract = getEthereumContract();
+            const availableTransactions = await transactionContract.getAllTransactions();
+            const structuredTransactions = availableTransactions.map((transaction) => ({
+                addressTo: transaction.receiver,
+                addressFrom: transaction.sender,
+                timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
+                message: transaction.message,
+                keyword: transaction.keyword,
+                amount: parseInt(transaction.amount._hex) / (10 ** 18)
+            }));
+            console.log(availableTransactions);
+            setTransactions(structuredTransactions);
+        } catch (error) {
+            console.log(error);
+
+        }
+    };
 
 
 
@@ -38,12 +62,27 @@ export const TransactionProvider = ({ children }) => {
             const accounts = await ethereum.request({ method: 'eth_accounts' });
             if (accounts.length) {// If someone account exist
                 setCurrentAccount(accounts[0])
-                // getAllTransactions
+                getAllTransactions();
             } else { console.log('No accounts found') }
         } catch (error) {
             console.error(error); throw new Error("No ethereum object")
         }
-    }
+    };
+
+    const checkIfTransactionsExists = async () => {
+        try {
+
+            const transactionsContract = createEthereumContract();
+            const currentTransactionCount = await transactionsContract.getTransactionCount();
+
+            window.localStorage.setItem("transactionCount", currentTransactionCount);
+        } catch (error) {
+            console.log(error);
+
+            // throw new Error("No ethereum object");
+        }
+    };
+
 
 
     const connectWallet = async () => {
@@ -55,7 +94,7 @@ export const TransactionProvider = ({ children }) => {
         } catch (error) {
             console.error(error); throw new Error("No ethereum object")
         }
-    }
+    };
 
 
     const sendTransaction = async () => {
@@ -86,19 +125,31 @@ export const TransactionProvider = ({ children }) => {
             const transactionCount = await transactionContract.getTransactionCount();
             // Set current transaction count
             setTransactionCount(transactionCount.toNumber());
+            window.reload();
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     // **
     useEffect(() => {
         checkIfWalletIsConnected();
-    }, [])
+        checkIfTransactionsExists();
+    }, []);
     // **
 
     return (
-        <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, setFormData, handleChange, sendTransaction }}>
+        <TransactionContext.Provider value={{
+            connectWallet,
+            currentAccount,
+            formData,
+            setFormData,
+            handleChange,
+            sendTransaction,
+            transactions,
+            isLoading
+        }}
+        >
             {children}
         </TransactionContext.Provider>
     )
